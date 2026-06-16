@@ -69,6 +69,23 @@
 </div>
 
 <script>
+function getParam(name) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(name);
+}
+
+document.getElementById("produto").innerText =
+  getParam("produto") || "Suco Bacupari";
+
+document.getElementById("fab").innerText =
+  getParam("fab") || "01/05/2026";
+
+document.getElementById("val").innerText =
+  getParam("val") || "01/06/2026";
+
+document.getElementById("resp").innerText =
+  getParam("resp") || "Ekatu";
+
 function gerarPDF() {
   const element = document.getElementById("label");
 
