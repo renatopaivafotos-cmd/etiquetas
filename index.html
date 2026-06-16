@@ -8,17 +8,23 @@
 <style>
   body {
     margin: 0;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background: white;
   }
 
-  /* 🔥 área real da etiqueta */
+  .wrapper {
+    padding: 0;
+  }
+
+  /* etiqueta real */
   .label {
     width: 48mm;
     height: 30mm;
     padding: 2mm;
     box-sizing: border-box;
     overflow: hidden;
+    border: 1px solid #000;
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -28,8 +34,8 @@
     font-size: 11px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 2mm;
     border-bottom: 1px solid #000;
+    margin-bottom: 2mm;
   }
 
   .line {
@@ -37,14 +43,13 @@
     margin-bottom: 1mm;
   }
 
-  /* 🔥 botão só na tela */
   button {
     margin: 10px;
     padding: 10px;
     width: calc(100% - 20px);
   }
 
-  /* 🔥 PRINT LIMPO (sem A4, sem escala) */
+  /* 🔥 PRINT CONTROLADO (isso é o que estava faltando antes) */
   @media print {
     body {
       margin: 0;
@@ -54,10 +59,17 @@
       display: none;
     }
 
+    .wrapper {
+      margin: 0;
+      padding: 0;
+    }
+
     .label {
+      border: none;
       width: 48mm;
       height: 30mm;
-      margin: 0;
+      page-break-after: avoid;
+      break-inside: avoid;
     }
 
     @page {
@@ -70,15 +82,19 @@
 
 <body>
 
-<div class="label">
-  <div class="title" id="produto">Suco Bacupari</div>
+<div class="wrapper">
 
-  <div class="line">Fab: <span id="fab">01/05/2026</span></div>
-  <div class="line">Val: <span id="val">01/06/2026</span></div>
-  <div class="line">Resp: <span id="resp">Ekatu</span></div>
+  <div class="label">
+    <div class="title" id="produto">Suco Bacupari</div>
+
+    <div class="line">Fab: <span id="fab">01/05/2026</span></div>
+    <div class="line">Val: <span id="val">01/06/2026</span></div>
+    <div class="line">Resp: <span id="resp">Ekatu</span></div>
+  </div>
+
+  <button onclick="window.print()">Imprimir etiqueta</button>
+
 </div>
-
-<button onclick="window.print()">Imprimir etiqueta</button>
 
 <script>
 function getParam(name) {
