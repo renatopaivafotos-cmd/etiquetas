@@ -25,8 +25,12 @@
     background: white;
     padding: 2mm;
     box-sizing: border-box;
-    overflow: hidden;
     border: 1px solid #000;
+
+    /* 🔥 importante pra evitar duplicação/corte */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .title {
@@ -35,11 +39,13 @@
     text-align: center;
     border-bottom: 1px solid #000;
     margin-bottom: 1mm;
+    flex-shrink: 0;
   }
 
   .line {
     font-size: 7pt;
     margin-bottom: 1mm;
+    flex-shrink: 0;
   }
 
   button {
@@ -93,8 +99,20 @@ function gerarPDF() {
     margin: 0,
     filename: 'etiqueta.pdf',
     image: { type: 'jpeg', quality: 1 },
-    html2canvas: { scale: 5 },
-    jsPDF: { unit: 'mm', format: [48, 30], orientation: 'landscape' }
+    html2canvas: {
+      scale: 5,
+      useCORS: true,
+      scrollY: 0,
+      windowWidth: element.scrollWidth
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: [48, 30],
+      orientation: 'landscape'
+    },
+    pagebreak: {
+      mode: ['avoid-all']
+    }
   };
 
   html2pdf().set(opt).from(element).save();
