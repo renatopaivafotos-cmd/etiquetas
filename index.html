@@ -5,113 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Etiqueta</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
   body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: white;
+    font-family: Arial;
+    background: #f2f2f2;
   }
 
-  .wrapper {
-    padding: 0;
-  }
-
-  /* etiqueta real */
   .label {
     width: 48mm;
     height: 30mm;
+    background: white;
     padding: 2mm;
     box-sizing: border-box;
     overflow: hidden;
-    border: 1px solid #000;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
   }
 
   .title {
-    font-size: 11px;
+    font-size: 10pt;
     font-weight: bold;
     text-align: center;
     border-bottom: 1px solid #000;
-    margin-bottom: 2mm;
+    margin-bottom: 1mm;
   }
 
   .line {
-    font-size: 9px;
+    font-size: 7pt;
     margin-bottom: 1mm;
   }
 
   button {
-    margin: 10px;
+    margin-top: 10px;
     padding: 10px;
-    width: calc(100% - 20px);
+    width: 100%;
   }
-  @media print
-  {
-    body {
-      margin: 0;
-    }
 
-    button {
-      display: none;
-    }
-
-    .wrapper {
-      margin: 0;
-      padding: 0;
-    }
-
-    .label {
-      border: none;
-      width: 48mm;
-      height: 30mm;
-      page-break-after: avoid;
-      break-inside: avoid;
-    }
-
-    @page {
-      size: 48mm 30mm;
-      margin: 0;
-    }
+  .container {
+    padding: 10px;
   }
 </style>
 </head>
 
 <body>
 
-<div class="wrapper">
+<div class="container">
 
-  <div class="label">
+  <div id="label" class="label">
     <div class="title" id="produto">Suco Bacupari</div>
 
     <div class="line">Fab: <span id="fab">01/05/2026</span></div>
     <div class="line">Val: <span id="val">01/06/2026</span></div>
-    <div class="line">Resp: <span id="resp">Ekatu</span></div>
+    <div class="line">Resp: <span id="resp">Equipe Ekatu</span></div>
   </div>
 
-  <button onclick="window.print()">Imprimir etiqueta</button>
+  <button onclick="gerarPDF()">Baixar etiqueta PDF</button>
 
 </div>
 
 <script>
-function getParam(name) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
+function gerarPDF() {
+  const element = document.getElementById("label");
+
+  const opt = {
+    margin: 0,
+    filename: 'etiqueta.pdf',
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 5 },
+    jsPDF: { unit: 'mm', format: [48, 30], orientation: 'landscape' }
+  };
+
+  html2pdf().set(opt).from(element).save();
 }
-
-document.getElementById("produto").innerText =
-  getParam("produto") || "Suco Bacupari";
-
-document.getElementById("fab").innerText =
-  getParam("fab") || "01/05/2026";
-
-document.getElementById("val").innerText =
-  getParam("val") || "01/06/2026";
-
-document.getElementById("resp").innerText =
-  getParam("resp") || "Ekatu";
 </script>
 
 </body>
