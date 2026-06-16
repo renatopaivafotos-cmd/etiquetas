@@ -18,6 +18,7 @@
     padding: 10px;
   }
 
+  /* etiqueta 48x30 */
   .label {
     width: 48mm;
     height: 30mm;
@@ -25,6 +26,7 @@
     padding: 2mm;
     box-sizing: border-box;
     overflow: hidden;
+
     display: flex;
     flex-direction: column;
   }
@@ -54,6 +56,7 @@
 
 <div class="container">
 
+  <!-- ETIQUETA -->
   <div id="label" class="label">
     <div class="title" id="produto">Suco Bacupari</div>
 
@@ -67,44 +70,49 @@
 </div>
 
 <script>
-function getParam(name) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
-}
+window.addEventListener("DOMContentLoaded", () => {
 
-/* ✔️ AGORA TODOS OS CAMPOS VINDO DO ADALO */
-document.getElementById("produto").innerText =
-  getParam("produto") || "Suco Bacupari";
+  function getParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
+  }
 
-document.getElementById("fab").innerText =
-  getParam("fab") || "01/05/2026";
+  const produto = getParam("produto");
+  const fab = getParam("fab");
+  const val = getParam("val");
+  const resp = getParam("resp");
 
-document.getElementById("val").innerText =
-  getParam("val") || "01/06/2026";
+  if (produto) document.getElementById("produto").innerText = produto;
+  if (fab) document.getElementById("fab").innerText = fab;
+  if (val) document.getElementById("val").innerText = val;
+  if (resp) document.getElementById("resp").innerText = resp;
 
-document.getElementById("resp").innerText =
-  getParam("resp") || "Equipe Ekatu";
+});
 
-/* ✔️ PDF CORRIGIDO (SEM SEGUNDA PÁGINA EM BRANCO) */
 function gerarPDF() {
   const element = document.getElementById("label");
 
   const opt = {
     margin: 0,
-    filename: 'etiqueta.pdf',
-    image: { type: 'jpeg', quality: 1 },
+    filename: "etiqueta.pdf",
+    image: { type: "jpeg", quality: 1 },
+
     html2canvas: {
-      scale: 3,
+      scale: 2,
       useCORS: true,
-      scrollY: 0
+      scrollY: 0,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight
     },
+
     jsPDF: {
-      unit: 'mm',
+      unit: "mm",
       format: [48, 30],
-      orientation: 'landscape'
+      orientation: "landscape"
     },
+
     pagebreak: {
-      mode: ['avoid-all']
+      avoid: "all"
     }
   };
 
