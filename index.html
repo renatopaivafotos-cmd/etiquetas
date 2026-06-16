@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Etiqueta</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <style>
   body {
     margin: 0;
@@ -26,8 +24,6 @@
     padding: 2mm;
     box-sizing: border-box;
     border: 1px solid #000;
-
-    /* 🔥 importante pra evitar duplicação/corte */
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -39,13 +35,11 @@
     text-align: center;
     border-bottom: 1px solid #000;
     margin-bottom: 1mm;
-    flex-shrink: 0;
   }
 
   .line {
     font-size: 7pt;
     margin-bottom: 1mm;
-    flex-shrink: 0;
   }
 
   button {
@@ -53,6 +47,36 @@
     padding: 10px;
     width: 100%;
     font-size: 14px;
+  }
+
+  /* 🔥 PRINT CORRETO TÉRMICO */
+  @media print {
+
+    body {
+      background: white;
+    }
+
+    .container {
+      padding: 0;
+    }
+
+    .label {
+      width: 48mm;
+      height: 30mm;
+      margin: 0;
+      border: none;
+      page-break-after: avoid;
+      break-inside: avoid;
+    }
+
+    button {
+      display: none;
+    }
+
+    @page {
+      size: 48mm 30mm;
+      margin: 0;
+    }
   }
 </style>
 </head>
@@ -70,7 +94,7 @@
     <div class="line">Resp: <span id="resp">Ekatu</span></div>
   </div>
 
-  <button onclick="gerarPDF()">Baixar PDF da Etiqueta</button>
+  <button onclick="imprimir()">Imprimir Etiqueta</button>
 
 </div>
 
@@ -92,30 +116,9 @@ document.getElementById("val").innerText =
 document.getElementById("resp").innerText =
   getParam("resp") || "Ekatu";
 
-function gerarPDF() {
-  const element = document.getElementById("label");
-
-  const opt = {
-    margin: 0,
-    filename: 'etiqueta.pdf',
-    image: { type: 'jpeg', quality: 1 },
-    html2canvas: {
-      scale: 5,
-      useCORS: true,
-      scrollY: 0,
-      windowWidth: element.scrollWidth
-    },
-    jsPDF: {
-      unit: 'mm',
-      format: [48, 30],
-      orientation: 'landscape'
-    },
-    pagebreak: {
-      mode: ['avoid-all']
-    }
-  };
-
-  html2pdf().set(opt).from(element).save();
+/* ✔️ IMPRESSÃO SIMPLES E ESTÁVEL */
+function imprimir() {
+  window.print();
 }
 </script>
 
