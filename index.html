@@ -8,7 +8,7 @@
 <style>
   body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: #f2f2f2;
   }
 
@@ -16,67 +16,33 @@
     padding: 10px;
   }
 
-  /* ETIQUETA 48x30mm */
+  /* etiqueta visual */
   .label {
-    width: 48mm;
-    height: 30mm;
+    width: 480px;   /* equivalente digital do 48mm */
+    height: 300px;  /* equivalente digital do 30mm */
     background: white;
-    padding: 2mm;
+    border: 2px solid #000;
+    padding: 10px;
     box-sizing: border-box;
-    border: 1px solid #000;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
   }
 
   .title {
-    font-size: 10pt;
+    font-size: 24px;
     font-weight: bold;
     text-align: center;
     border-bottom: 1px solid #000;
-    margin-bottom: 1mm;
+    margin-bottom: 10px;
   }
 
   .line {
-    font-size: 7pt;
-    margin-bottom: 1mm;
+    font-size: 18px;
+    margin-bottom: 6px;
   }
 
   button {
     margin-top: 10px;
-    padding: 10px;
+    padding: 12px;
     width: 100%;
-    font-size: 14px;
-  }
-
-  /* 🔥 PRINT CORRETO TÉRMICO */
-  @media print {
-
-    body {
-      background: white;
-    }
-
-    .container {
-      padding: 0;
-    }
-
-    .label {
-      width: 48mm;
-      height: 30mm;
-      margin: 0;
-      border: none;
-      page-break-after: avoid;
-      break-inside: avoid;
-    }
-
-    button {
-      display: none;
-    }
-
-    @page {
-      size: 48mm 30mm;
-      margin: 0;
-    }
   }
 </style>
 </head>
@@ -85,7 +51,6 @@
 
 <div class="container">
 
-  <!-- ETIQUETA -->
   <div id="label" class="label">
     <div class="title" id="produto">Suco Bacupari</div>
 
@@ -94,7 +59,7 @@
     <div class="line">Resp: <span id="resp">Ekatu</span></div>
   </div>
 
-  <button onclick="imprimir()">Imprimir Etiqueta</button>
+  <button onclick="baixarImagem()">Baixar Etiqueta</button>
 
 </div>
 
@@ -116,9 +81,48 @@ document.getElementById("val").innerText =
 document.getElementById("resp").innerText =
   getParam("resp") || "Ekatu";
 
-/* ✔️ IMPRESSÃO SIMPLES E ESTÁVEL */
-function imprimir() {
-  window.print();
+/* 🔥 GERA IMAGEM REAL DA ETIQUETA */
+function baixarImagem() {
+  const node = document.getElementById("label");
+
+  htmlToImage(node).then(function (dataUrl) {
+    const link = document.createElement('a');
+    link.download = 'etiqueta.png';
+    link.href = dataUrl;
+    link.click();
+  });
+}
+
+/* mini lib inline simples */
+function htmlToImage(node) {
+  return new Promise((resolve) => {
+    const canvas = document.createElement("canvas");
+    const scale = 2;
+
+    canvas.width = node.offsetWidth * scale;
+    canvas.height = node.offsetHeight * scale;
+
+    const ctx = canvas.getContext("2d");
+    ctx.scale(scale, scale);
+
+    const data = new XMLSerializer().serializeToString(node);
+    const img = new Image();
+
+    img.onload = function () {
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL("image/png"));
+    };
+
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${node.offsetWidth}" height="${node.offsetHeight}">
+        <foreignObject width="100%" height="100%">
+          ${data}
+        </foreignObject>
+      </svg>
+    `;
+
+    img.src = "data:image/svg+xml;base64," + btoa(svg);
+  });
 }
 </script>
 
