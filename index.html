@@ -90,7 +90,13 @@ function baixarPNG() {
 
   htmlToImage.toPng(node, {
     cacheBust: true,
-    pixelRatio: 2
+    pixelRatio: 3,
+    width: node.offsetWidth,
+    height: node.offsetHeight,
+    style: {
+      transform: "scale(1)",
+      transformOrigin: "top left"
+    }
   })
   .then(function (dataUrl) {
     const link = document.createElement("a");
