@@ -69,8 +69,7 @@
 
 <script>
 function getParam(name) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
+  return new URL(window.location.href).searchParams.get(name);
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -88,30 +87,39 @@ window.addEventListener("DOMContentLoaded", () => {
 async function baixarPDF() {
   const node = document.getElementById("label");
 
-  const dataUrl = await window.htmlToImage.toPng(node, {
-    cacheBust: true,
-    pixelRatio: 3
-  });
+  try {
+    const dataUrl = await window.htmlToImage.toPng(node, {
+      cacheBust: true,
+      pixelRatio: 3
+    });
 
-  const { jsPDF } = window.jspdf;
+    const { jsPDF } = window.jspdf;
 
-  const pdf = new jsPDF({
-    orientation: "landscape",
-    unit: "mm",
-    format: [48, 30]
-  });
+    const pdf = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: [48, 30]
+    });
 
-  pdf.addImage(dataUrl, "PNG", 0, 0, 48, 30);
+    pdf.addImage(dataUrl, "PNG", 0, 0, 48, 30);
 
-  const blob = pdf.output("blob");
-  const url = URL.createObjectURL(blob);
+    const blob = pdf.output("blob");
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "etiqueta.pdf";
-  a.click();
+    const url = URL.createObjectURL(blob);
 
-  URL.revokeObjectURL(url);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "etiqueta.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao gerar PDF");
+  }
 }
 </script>
 
